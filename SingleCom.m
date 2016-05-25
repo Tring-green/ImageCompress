@@ -38,6 +38,7 @@ b=[17 18 24 47 99 99 99 99;
 BY2=blkproc(BY,[8 8],'round(x./P1)',a);
 BU2=blkproc(BU,[8 8],'round(x./    P1)',b);
 BV2=blkproc(BV,[8 8],'round(x./P1)',b);
+
 comp_image_Y=img2jpg(BY2,1);
 comp_image_U=img2jpg(BU2,2);
 comp_image_V=img2jpg(BV2,3);
