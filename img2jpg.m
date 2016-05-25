@@ -12,44 +12,71 @@ xb = size(y, 2);                   % 分块数
 y = y(order, :);                   % 按照order的顺序排列数据
 
 eob = max(y(:)) + 1;               % 设置块尾结束标志
-r = zeros(numel(y) + size(y, 2), 1);
+% r = zeros(numel(y) + size(y, 2), 1);
 count = 0;
+
+rdc = zeros(xb, 1);   % 生成dc的游程编码列矩阵
+rdc = [y(1,1)];
+biggest = y(1,1);
+rac = [];   % 生成ac的游程编码矩阵
+zcount = 0;
 for j = 1:xb                       % 每次处理一个块
+    for k=2:64
+        if(y(k,j)==0)
+            zcount = zcount + 1;
+        else
+            rac = [rac zcount y(k,j)];
+            zcount=0;
+        end
+    end
+    if(j>1)
+        rdc(j,1) = y(1,j) - biggest;
+    end
+    zcount = 0;
+    rac = [rac zcount 0];
     i = max(find(y(:, j)));         % 找到最后一个非零元素
-    if isempty(i)                   
-          i = 0;
+    if isempty(i)
+        i = 0;
     end
     p = count + 1;
     q = p + i;
     r(p:q) = [y(1:i, j); eob];      % 加入块结束标志
     count = count + i + 1;          % 计数
 end
+rac = [rac 9999 xb];
+rac = rac.';
 
-r((count + 1):end) = [];           % 删除r 中不需要的元素
-[r1,r2]=size(r);
-for i=1:1000
-    if i*i>size(r)+7     
-        break;
+result = cat(1, rac, rdc);
+acbefore = find(result == 9999);
+recxb = result(acbefore+1);
+rec = zeros(64, recxb);
+ki = 2;
+kj = 1;
+rec(1, 1) = result(acbefore + 2);
+for i=1:(acbefore-1)/2+1
+    j=2*i-1;
+    if(j<acbefore)
+        ra = result(j,1);
+        rb = result(j+1,1);
+        if(ra == rb && ra == 0)
+            if(kj == recxb)
+                break;
+            end
+            kj = kj+1;
+            ki = 2;
+            rec(1, kj) = result(acbefore+2)+result(acbefore+kj+1) ;   
+        else
+            for kk=1:ra
+                rec(ki, kj) = 0;
+                ki = ki + 1;
+            end
+            rec(ki, kj) = rb;
+            ki = ki + 1;
+        end
     end
 end
-save = zeros(i, i);
-for j=1:size(r)  
-    save(j) = r(j);
-end
 
-save(j+1) = 999;
-save(j+2) = r1;
-save(j+3) = uint16(xn);
-save(j+4) = uint16(xm);
-save(j+5) = uint16(xb);
-save(j+6) = flag;
-save(j+7) = 1000;
-
-y           = struct;
-y.realsize = r1;
-y.size      = uint16([xm xn]);
-y.numblocks = uint16(xb);
-y.r   = r;
-y.flag = flag;
-
+trans = double([10000 uint16(xn) uint16(xm) flag 10001]');
+result = cat(1, result, trans);
+save = result;
 end
