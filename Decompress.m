@@ -4,12 +4,21 @@ function reco_image = Decompress(comp_image)
 % Initialization
 for i=1:4
     clear temp_image
-    temp_image = comp_image(:,:,:,i);
     
-    comp_image_Y = temp_image(:,:,1);
-    comp_image_U = temp_image(:,:,2);
-    comp_image_V = temp_image(:,:,3);
+    pos = find(comp_image == 10002);
+    switch i
+        case 1
+            temp_image = comp_image(1: pos(1));
+        otherwise
+            temp_image = comp_image(pos(i-1)+1:pos(i));
+    end
+   
     
+    pos = find(temp_image == 10001);
+    
+    comp_image_Y = temp_image(1:pos(1));
+    comp_image_U = temp_image(pos(1)+1:pos(2));
+    comp_image_V = temp_image(pos(2)+1:pos(3));
     
     orig_image_Y = jpg2img(comp_image_Y);
     orig_image_U =  jpg2img(comp_image_U);

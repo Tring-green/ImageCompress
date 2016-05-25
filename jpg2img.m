@@ -53,7 +53,7 @@ for i=1:(acbefore-1)/2+1
             if(kj == recxb)
                 break;
             end
-            kj = kj+1
+            kj = kj+1;
             ki = 2;
             rec(1, kj) = result(acbefore+2)+result(acbefore+kj+1) ;   
         else
@@ -69,19 +69,7 @@ end
 
 x = rec;
 eob = max(x(:));                      % 返回块尾标志
-
-z = zeros(64, xb);   k = 1;           % 生成 64 * xb 的零矩阵
-for j = 1:xb                          % x中的值放入z中，如果遇到eob就转入下一列
-    for i = 1:64
-        if x(k) == eob
-            k = k + 1;
-            break;
-        else
-            z(i, j) = x(k);
-            k = k + 1;
-        end
-    end
-end
+z = rec;
 T=dctmtx(8);                                   %产生一个8*8的DCT变换举证
 z = z(rev, :);                                 % 按order恢复之前排列
 x = col2im(z, [8 8], [xm xn], 'distinct');     % 生成矩阵

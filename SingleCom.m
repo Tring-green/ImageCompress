@@ -42,48 +42,7 @@ comp_image_Y=img2jpg(BY2,1);
 comp_image_U=img2jpg(BU2,2);
 comp_image_V=img2jpg(BV2,3);
 
-
-
-
-if numel(comp_image_Y)>=numel(comp_image_U)
-    if numel(comp_image_Y)>=numel(comp_image_V)
-        sizer = size(comp_image_Y);
-    else
-        sizer = size(comp_image_V);
-    end
-else
-    if numel(comp_image_U)>=numel(comp_image_V)
-        sizer = size(comp_image_U);
-    else
-        sizer = size(comp_image_V);
-    end
-end
-
-
-clear temparr;
-temparr = zeros(sizer(1));
-for i=1:numel(comp_image_Y)
-    temparr(i) = comp_image_Y(i);
-end
-comp_image_Y = temparr;
-
-clear temparr;
-temparr = zeros(sizer(1));
-for i=1:numel(comp_image_U)
-    temparr(i) = comp_image_U(i);
-end
-comp_image_U = temparr;
-
-clear temparr;
-temparr = zeros(sizer(1));
-for i=1:numel(comp_image_V)
-    temparr(i) = comp_image_V(i);
-end
-comp_image_V = temparr;
-
-clear save_image
-save_image(:,:,1)=comp_image_Y;
-save_image(:,:,2)=comp_image_U;
-save_image(:,:,3)=comp_image_V;
+comp_Y_U = cat(1, comp_image_Y, comp_image_U);
+save_image = cat(1, comp_Y_U, comp_image_V);
 
 comp_image = save_image;
