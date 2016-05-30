@@ -12,7 +12,6 @@ xb = size(y, 2);                   % 分块数
 y = y(order, :);                   % 按照order的顺序排列数据
 
 eob = max(y(:)) + 1;               % 设置块尾结束标志
-% r = zeros(numel(y) + size(y, 2), 1);
 count = 0;
 
 rdc = zeros(xb, 1);   % 生成dc的游程编码列矩阵
@@ -46,7 +45,9 @@ end
 rac = [rac 9999 xb];
 rac = rac.';
 
+% rdc保存直流分量，rac保留交流分量
 result = cat(1, rac, rdc);
+% 进行行程编码，并用9999进行分离
 acbefore = find(result == 9999);
 recxb = result(acbefore+1);
 rec = zeros(64, recxb);
@@ -75,7 +76,7 @@ for i=1:(acbefore-1)/2+1
         end
     end
 end
-
+% 生成一维矩阵
 trans = double([10000 uint16(xn) uint16(xm) flag 10001]');
 result = cat(1, result, trans);
 save = result;
