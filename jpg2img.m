@@ -36,6 +36,7 @@ xn =  double(comp_image(pos+1));                           % 列数
 xm =  double(comp_image(pos+2));                           % 行数
 flag = comp_image(pos+3);
 
+% 找到直流分量的最后一个元素
 acbefore = find(result == 9999);
 recxb = result(acbefore+1);
 xb = recxb;
@@ -44,6 +45,7 @@ ki = 2;
 kj = 1;
 rec(1, 1) = result(acbefore + 2);
 
+% 回复经过游程编码的AC系数
 for i=1:(acbefore-1)/2+1
     j=2*i-1;
     if(j<acbefore)
@@ -66,9 +68,6 @@ for i=1:(acbefore-1)/2+1
         end
     end
 end
-
-x = rec;
-eob = max(x(:));                      % 返回块尾标志
 z = rec;
 T=dctmtx(8);                                   %产生一个8*8的DCT变换举证
 z = z(rev, :);                                 % 按order恢复之前排列

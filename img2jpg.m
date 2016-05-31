@@ -33,50 +33,14 @@ for j = 1:xb                       % 每次处理一个块
     end
     zcount = 0;
     rac = [rac zcount 0];
-    i = max(find(y(:, j)));         % 找到最后一个非零元素
-    if isempty(i)
-        i = 0;
-    end
-    p = count + 1;
-    q = p + i;
-    r(p:q) = [y(1:i, j); eob];      % 加入块结束标志
-    count = count + i + 1;          % 计数
 end
 rac = [rac 9999 xb];
 rac = rac.';
 
 % rdc保存直流分量，rac保留交流分量
 result = cat(1, rac, rdc);
-% 进行行程编码，并用9999进行分离
-acbefore = find(result == 9999);
-recxb = result(acbefore+1);
-rec = zeros(64, recxb);
-ki = 2;
-kj = 1;
-rec(1, 1) = result(acbefore + 2);
-for i=1:(acbefore-1)/2+1
-    j=2*i-1;
-    if(j<acbefore)
-        ra = result(j,1);
-        rb = result(j+1,1);
-        if(ra == rb && ra == 0)
-            if(kj == recxb)
-                break;
-            end
-            kj = kj+1;
-            ki = 2;
-            rec(1, kj) = result(acbefore+2)+result(acbefore+kj+1) ;   
-        else
-            for kk=1:ra
-                rec(ki, kj) = 0;
-                ki = ki + 1;
-            end
-            rec(ki, kj) = rb;
-            ki = ki + 1;
-        end
-    end
-end
-% 生成一维矩阵
+
+% % 生成一维矩阵
 trans = double([10000 uint16(xn) uint16(xm) flag 10001]');
 result = cat(1, result, trans);
 save = result;
